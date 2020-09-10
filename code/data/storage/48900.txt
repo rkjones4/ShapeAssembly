@@ -1,0 +1,47 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.809, 1.797, 0.404, True)
+	Program_1 = Cuboid(0.778, 0.094, 0.394, True)
+	Program_2 = Cuboid(0.809, 1.723, 0.404, True)
+	squeeze(Program_2, bbox, bbox, top, 0.5, 0.5)
+	squeeze(Program_1, bbox, Program_2, bot, 0.496, 0.495)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.778, 0.094, 0.394, True)
+	cube0 = Cuboid(0.028, 0.06, 0.394, False)
+	cube1 = Cuboid(0.737, 0.085, 0.01, True)
+	cube2 = Cuboid(0.026, 0.082, 0.393, True)
+	attach(cube1, bbox, 0.5, 1.0, 0.5, 0.504, 1.0, 0.987)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.983, 0.0, 0.499)
+	attach(cube1, cube2, 1.0, 0.5, 0.5, 0.337, 0.62, 0.988)
+	attach(cube0, cube1, 0.5, 0.5, 1.0, 0.0, 0.331, 0.975)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.809, 1.723, 0.404, True)
+	cube0 = Cuboid(0.056, 0.499, 0.017, True)
+	cube1 = Cuboid(0.056, 1.019, 0.017, True)
+	Program_3 = Cuboid(0.382, 1.681, 0.392, True)
+	cube3 = Cuboid(0.809, 0.057, 0.351, True)
+	cube4 = Cuboid(0.75, 0.022, 0.093, True)
+	cube5 = Cuboid(0.689, 0.016, 0.292, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.507, 0.016, 0.955)
+	attach(cube1, bbox, 0.5, 1.0, 0.5, 0.505, 0.951, 0.796)
+	squeeze(Program_3, bbox, bbox, top, 0.269, 0.491)
+	attach(cube3, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.439)
+	attach(cube0, Program_3, 0.5, 0.5, 0.0, 1.0, 0.165, 0.957)
+	attach(cube1, Program_3, 0.0, 0.5, 0.5, 0.927, 0.672, 0.814)
+	attach(cube4, Program_3, 0.5, 0.5, 0.0, 0.99, 0.345, 0.786)
+	attach(cube5, Program_3, 0.5, 0.0, 0.5, 0.978, 0.592, 0.383)
+	reflect(Program_3, X)
+	translate(cube5, Y, 1, 0.16)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.382, 1.681, 0.392, True)
+	cube0 = Cuboid(0.033, 1.681, 0.392, True)
+	cube1 = Cuboid(0.342, 0.553, 0.015, True)
+	cube2 = Cuboid(0.35, 1.076, 0.019, True)
+	squeeze(cube0, bbox, bbox, top, 0.043, 0.5)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.532, 0.0, 0.977)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.543, 0.994, 0.802)
+	attach(cube1, cube0, 0.0, 0.5, 0.5, 0.983, 0.165, 0.977)
+	attach(cube2, cube0, 0.0, 0.5, 0.5, 0.996, 0.674, 0.802)
+}

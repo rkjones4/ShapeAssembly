@@ -1,0 +1,55 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.769, 1.71, 0.903, True)
+	Program_1 = Cuboid(0.769, 0.807, 0.865, True)
+	Program_2 = Cuboid(0.769, 0.173, 0.903, True)
+	Program_3 = Cuboid(0.769, 0.813, 0.077, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.479)
+	attach(Program_2, Program_1, 0.5, 0.444, 0.479, 0.5, 1.0, 0.5)
+	squeeze(Program_3, bbox, Program_2, top, 0.5, 0.043)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.769, 0.807, 0.865, True)
+	Program_4 = Cuboid(0.077, 0.807, 0.865, True)
+	cube1 = Cuboid(0.615, 0.077, 0.038, True)
+	squeeze(Program_4, bbox, bbox, top, 0.05, 0.5)
+	attach(cube1, Program_4, 0.0, 0.5, 0.5, 1.0, 0.762, 0.956)
+	reflect(Program_4, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.769, 0.173, 0.903, True)
+	cube0 = Cuboid(0.769, 0.096, 0.903, True)
+	cube1 = Cuboid(0.038, 0.076, 0.711, True)
+	cube2 = Cuboid(0.615, 0.076, 0.038, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
+	squeeze(cube1, bbox, cube0, bot, 0.05, 0.479)
+	squeeze(cube2, bbox, cube0, bot, 0.5, 0.043)
+	reflect(cube1, X)
+	reflect(cube2, Z)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.769, 0.813, 0.077, True)
+	cube0 = Cuboid(0.077, 0.114, 0.019, True)
+	cube1 = Cuboid(0.077, 0.114, 0.019, True)
+	cube2 = Cuboid(0.077, 0.813, 0.077, True)
+	cube3 = Cuboid(0.615, 0.115, 0.038, True)
+	cube4 = Cuboid(0.615, 0.115, 0.038, True)
+	cube5 = Cuboid(0.615, 0.115, 0.038, True)
+	squeeze(cube2, bbox, bbox, top, 0.05, 0.5)
+	attach(cube5, bbox, 0.5, 1.0, 0.5, 0.5, 0.976, 0.5)
+	attach(cube5, cube2, 0.0, 0.5, 0.5, 1.0, 0.905, 0.5)
+	attach(cube3, cube2, 0.0, 0.5, 0.5, 1.0, 0.622, 0.5)
+	squeeze(cube1, cube5, cube3, top, 0.219, 0.5)
+	attach(cube4, cube2, 0.0, 0.5, 0.5, 1.0, 0.338, 0.5)
+	attach(cube0, cube4, 0.5, 0.0, 0.5, 0.219, 1.0, 0.5)
+	translate(cube0, X, 2, 0.451)
+	translate(cube1, X, 2, 0.451)
+	reflect(cube2, X)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.077, 0.807, 0.865, True)
+	cube0 = Cuboid(0.077, 0.799, 0.077, True)
+	cube1 = Cuboid(0.038, 0.077, 0.711, True)
+	squeeze(cube0, bbox, bbox, top, 0.5, 0.044)
+	attach(cube1, cube0, 0.5, 0.5, 0.0, 0.5, 0.77, 1.0)
+	reflect(cube0, Z)
+}

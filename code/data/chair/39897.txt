@@ -1,0 +1,51 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.724, 1.688, 0.628, True)
+	Program_1 = Cuboid(0.658, 1.11, 0.581, True)
+	Program_2 = Cuboid(0.724, 0.146, 0.604, True)
+	Program_3 = Cuboid(0.659, 0.579, 0.045, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.503)
+	squeeze(Program_3, bbox, Program_1, top, 0.5, 0.035)
+	attach(Program_2, Program_1, 0.5, 0.577, 0.484, 0.5, 1.0, 0.5)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.658, 1.11, 0.581, True)
+	Program_4 = Cuboid(0.093, 1.11, 0.584, True)
+	cube1 = Cuboid(0.408, 0.042, 0.041, True)
+	cube2 = Cuboid(0.488, 0.042, 0.041, True)
+	squeeze(Program_4, bbox, bbox, top, 0.095, 0.495)
+	attach(cube1, Program_4, 0.0, 0.5, 0.5, 0.964, 0.371, 0.069)
+	attach(cube2, Program_4, 0.0, 0.5, 0.5, 0.973, 0.371, 0.919)
+	reflect(Program_4, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.724, 0.146, 0.604, True)
+	cube0 = Cuboid(0.724, 0.062, 0.562, True)
+	cube1 = Cuboid(0.052, 0.085, 0.578, True)
+	cube2 = Cuboid(0.479, 0.085, 0.043, True)
+	cube3 = Cuboid(0.658, 0.084, 0.05, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.535)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.108, 0.004, 0.48)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.497, 0.004, 0.036)
+	squeeze(cube3, bbox, cube0, bot, 0.5, 0.917)
+	attach(cube2, cube1, 0.0, 0.5, 0.5, 0.937, 0.5, 0.032)
+	reflect(cube1, X)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.659, 0.579, 0.045, True)
+	cube0 = Cuboid(0.435, 0.528, 0.025, True)
+	cube1 = Cuboid(0.076, 0.542, 0.042, True)
+	cube2 = Cuboid(0.659, 0.105, 0.034, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.5, 0.002, 0.533)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.116, 0.0, 0.528)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.5, 0.999, 0.466)
+	attach(cube0, cube1, 0.0, 0.5, 0.5, 0.97, 0.489, 0.572)
+	reflect(cube1, X)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.093, 1.11, 0.584, True)
+	cube0 = Cuboid(0.042, 0.063, 0.418, True)
+	cube1 = Cuboid(0.087, 1.11, 0.081, True)
+	squeeze(cube1, bbox, bbox, top, 0.5, 0.075)
+	attach(cube0, cube1, 0.5, 0.5, 0.0, 0.468, 0.38, 0.98)
+	reflect(cube1, Z)
+}

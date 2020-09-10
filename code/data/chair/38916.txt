@@ -1,0 +1,53 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.792, 1.618, 0.791, True)
+	Program_1 = Cuboid(0.792, 0.748, 0.791, True)
+	Program_2 = Cuboid(0.755, 0.101, 0.755, True)
+	Program_3 = Cuboid(0.791, 1.013, 0.089, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5)
+	attach(Program_3, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.057)
+	attach(Program_3, Program_1, 0.5, 0.0, 0.5, 0.5, 0.809, 0.057)
+	attach(Program_2, Program_1, 0.5, 0.0, 0.5, 0.5, 0.832, 0.501)
+	attach(Program_2, Program_3, 0.5, 0.5, 0.0, 0.5, 0.067, 0.204)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.792, 0.748, 0.791, True)
+	Program_4 = Cuboid(0.09, 0.748, 0.791, True)
+	cube1 = Cuboid(0.621, 0.039, 0.039, True)
+	squeeze(Program_4, bbox, bbox, top, 0.058, 0.5)
+	attach(cube1, Program_4, 0.0, 0.5, 0.5, 0.95, 0.331, 0.057)
+	reflect(Program_4, X)
+	reflect(cube1, Z)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.755, 0.101, 0.755, True)
+	cube0 = Cuboid(0.657, 0.025, 0.079, True)
+	cube1 = Cuboid(0.053, 0.101, 0.621, True)
+	cube2 = Cuboid(0.621, 0.101, 0.053, True)
+	squeeze(cube1, bbox, bbox, top, 0.035, 0.5)
+	squeeze(cube2, bbox, bbox, top, 0.5, 0.035)
+	attach(cube0, cube1, 0.0, 0.5, 0.5, 0.93, 0.5, 0.171)
+	translate(cube0, Z, 3, 0.548)
+	reflect(cube1, X)
+	reflect(cube2, Z)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.791, 1.013, 0.089, True)
+	cube0 = Cuboid(0.089, 1.004, 0.089, True)
+	cube1 = Cuboid(0.621, 0.101, 0.053, True)
+	cube2 = Cuboid(0.621, 0.101, 0.053, True)
+	squeeze(cube0, bbox, bbox, top, 0.056, 0.5)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.5, 0.974, 0.5)
+	attach(cube2, cube0, 0.0, 0.5, 0.5, 0.957, 0.924, 0.5)
+	attach(cube1, cube0, 0.006, 0.752, 0.488, 1.0, 0.5, 0.5)
+	reflect(cube0, X)
+	translate(cube1, Y, 2, 0.297)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.09, 0.748, 0.791, True)
+	cube0 = Cuboid(0.09, 0.604, 0.089, True)
+	cube1 = Cuboid(0.039, 0.039, 0.621, True)
+	cube2 = Cuboid(0.086, 0.746, 0.086, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.057)
+	squeeze(cube2, bbox, bbox, top, 0.48, 0.945)
+	squeeze(cube1, cube0, cube2, back, 0.496, 0.41)
+}

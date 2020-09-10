@@ -1,0 +1,51 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.773, 1.658, 0.825, True)
+	Program_1 = Cuboid(0.773, 0.783, 0.808, True)
+	Program_2 = Cuboid(0.771, 0.156, 0.762, True)
+	Program_3 = Cuboid(0.773, 0.964, 0.084, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.51)
+	squeeze(Program_3, bbox, Program_1, top, 0.5, 0.051)
+	attach(Program_2, Program_1, 0.5, 0.471, 0.469, 0.5, 1.0, 0.5)
+	attach(Program_2, Program_3, 0.5, 0.5, 0.0, 0.5, 0.098, 0.371)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.773, 0.783, 0.808, True)
+	Program_4 = Cuboid(0.057, 0.783, 0.808, True)
+	cube1 = Cuboid(0.661, 0.037, 0.018, True)
+	squeeze(Program_4, bbox, bbox, top, 0.037, 0.5)
+	attach(cube1, Program_4, 0.0, 0.5, 0.5, 0.983, 0.766, 0.967)
+	reflect(Program_4, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.771, 0.156, 0.762, True)
+	cube0 = Cuboid(0.771, 0.083, 0.716, True)
+	cube1 = Cuboid(0.037, 0.073, 0.66, True)
+	cube2 = Cuboid(0.661, 0.073, 0.037, True)
+	cube3 = Cuboid(0.661, 0.073, 0.037, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.53)
+	squeeze(cube1, bbox, cube0, bot, 0.029, 0.496)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.024)
+	squeeze(cube3, bbox, cube0, bot, 0.5, 0.971)
+	reflect(cube1, X)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.773, 0.964, 0.084, True)
+	cube0 = Cuboid(0.037, 0.793, 0.031, True)
+	cube1 = Cuboid(0.057, 0.953, 0.067, True)
+	cube2 = Cuboid(0.661, 0.073, 0.055, True)
+	squeeze(cube1, bbox, bbox, top, 0.037, 0.6)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.5, 0.99, 0.327)
+	attach(cube2, cube1, 0.0, 0.5, 0.5, 0.983, 0.951, 0.18)
+	attach(cube0, cube2, 0.5, 1.0, 0.5, 0.183, 0.011, 0.514)
+	translate(cube0, X, 3, 0.542)
+	reflect(cube1, X)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.057, 0.783, 0.808, True)
+	cube0 = Cuboid(0.057, 0.702, 0.06, True)
+	cube1 = Cuboid(0.018, 0.037, 0.667, True)
+	cube2 = Cuboid(0.055, 0.78, 0.055, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.5, 0.002, 0.037)
+	squeeze(cube2, bbox, bbox, top, 0.5, 0.966)
+	squeeze(cube1, cube0, cube2, back, 0.485, 0.777)
+}

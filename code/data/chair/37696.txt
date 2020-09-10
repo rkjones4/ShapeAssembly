@@ -1,0 +1,50 @@
+Assembly Program_0 {
+	bbox = Cuboid(1.311, 1.139, 1.274, True)
+	Program_1 = Cuboid(1.296, 0.366, 1.163, True)
+	Program_2 = Cuboid(1.205, 0.768, 1.167, True)
+	Program_3 = Cuboid(1.279, 0.793, 0.593, True)
+	Program_4 = Cuboid(0.168, 0.785, 0.694, True)
+	attach(Program_2, bbox, 0.338, 0.104, 0.345, 0.363, 0.342, 0.359)
+	squeeze(Program_1, bbox, Program_2, bot, 0.496, 0.501)
+	squeeze(Program_3, bbox, Program_1, top, 0.492, 0.244)
+	squeeze(Program_4, bbox, Program_1, top, 0.066, 0.691)
+	reflect(Program_4, X)
+}
+Assembly Program_1 {
+	bbox = Cuboid(1.296, 0.366, 1.163, True)
+	cube0 = Cuboid(0.187, 0.342, 0.169, False)
+	cube1 = Cuboid(0.107, 0.322, 0.183, True)
+	squeeze(cube0, bbox, bbox, top, 0.225, 0.144)
+	attach(cube1, bbox, 0.166, 0.0, 0.098, 0.015, 0.05, 0.858)
+	reflect(cube0, X)
+	reflect(cube1, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(1.205, 0.768, 1.167, True)
+	cube0 = Cuboid(1.205, 0.676, 1.16, True)
+	cube1 = Cuboid(1.137, 0.086, 1.119, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.497)
+	attach(cube1, bbox, 0.055, 0.026, 0.025, 0.069, 0.008, 0.067)
+	attach(cube0, cube1, 0.5, 0.0, 0.5, 0.514, 0.485, 0.477)
+}
+Assembly Program_3 {
+	bbox = Cuboid(1.279, 0.793, 0.593, True)
+	cube0 = Cuboid(1.167, 0.277, 0.527, True)
+	cube1 = Cuboid(0.238, 0.011, 0.173, False)
+	cube2 = Cuboid(1.273, 0.24, 0.563, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.489, 1.0, 0.548)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.216, 0.004, 0.347)
+	attach(cube2, bbox, 0.04, 0.995, 0.352, 0.045, 0.961, 0.337)
+	attach(cube0, cube2, 0.5, 0.5, 0.0, 0.487, 0.599, 0.108)
+	reflect(cube1, X)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.168, 0.785, 0.694, True)
+	cube0 = Cuboid(0.089, 0.164, 0.542, True)
+	cube1 = Cuboid(0.092, 0.211, 0.688, True)
+	cube2 = Cuboid(0.139, 0.528, 0.208, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.67, 0.994, 0.43)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.424, 0.002, 0.85)
+	attach(cube1, cube0, 0.771, 0.859, 0.423, 0.0, 0.5, 0.5)
+	attach(cube2, cube1, 0.5, 1.0, 0.5, 0.758, 0.106, 0.848)
+}

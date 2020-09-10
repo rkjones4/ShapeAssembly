@@ -1,0 +1,48 @@
+Assembly Program_0 {
+	bbox = Cuboid(1.795, 0.782, 0.568, True)
+	Program_1 = Cuboid(1.79, 0.782, 0.565, True)
+	cube1 = Cuboid(1.793, 0.142, 0.566, True)
+	squeeze(Program_1, bbox, bbox, top, 0.501, 0.497)
+	attach(cube1, Program_1, 0.5, 0.0, 0.5, 0.498, 0.746, 0.504)
+}
+Assembly Program_1 {
+	bbox = Cuboid(1.79, 0.782, 0.565, True)
+	Program_2 = Cuboid(0.046, 0.585, 0.049, True)
+	Program_3 = Cuboid(0.042, 0.583, 0.045, True)
+	cube2 = Cuboid(0.062, 0.557, 0.045, True)
+	cube3 = Cuboid(0.059, 0.555, 0.045, True)
+	cube4 = Cuboid(0.037, 0.027, 0.037, True)
+	cube5 = Cuboid(0.037, 0.023, 0.037, True)
+	cube6 = Cuboid(1.787, 0.056, 0.052, True)
+	cube7 = Cuboid(0.069, 0.043, 0.514, True)
+	cube8 = Cuboid(1.703, 0.084, 0.48, True)
+	attach(Program_2, bbox, 0.5, 0.0, 0.5, 0.032, 0.0, 0.904)
+	attach(Program_3, bbox, 0.5, 0.0, 0.5, 0.033, 0.0, 0.097)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.497, 0.036, 0.904)
+	attach(cube3, bbox, 0.5, 0.0, 0.5, 0.5, 0.036, 0.098)
+	attach(cube4, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.915)
+	attach(cube5, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.091)
+	attach(cube6, bbox, 0.5, 1.0, 0.5, 0.501, 1.0, 0.046)
+	attach(cube7, bbox, 0.5, 1.0, 0.5, 0.019, 0.983, 0.544)
+	attach(cube4, cube2, 0.5, 1.0, 0.5, 0.574, 0.0, 0.636)
+	attach(cube5, cube3, 0.5, 1.0, 0.5, 0.484, 0.0, 0.411)
+	attach(cube7, cube6, 0.5, 0.5, 0.0, 0.018, 0.382, 0.969)
+	attach(cube8, Program_2, 0.004, 0.494, 0.966, 0.489, 0.308, 0.406)
+	attach(cube8, Program_3, 0.005, 0.509, 0.034, 0.49, 0.311, 0.577)
+	reflect(Program_2, X)
+	reflect(Program_3, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.046, 0.585, 0.049, True)
+	cube0 = Cuboid(0.046, 0.558, 0.048, True)
+	cube1 = Cuboid(0.037, 0.027, 0.037, True)
+	squeeze(cube0, bbox, bbox, top, 0.5, 0.494)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.491, 0.0, 0.624)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.042, 0.583, 0.045, True)
+	cube0 = Cuboid(0.042, 0.557, 0.045, True)
+	cube1 = Cuboid(0.037, 0.021, 0.037, True)
+	squeeze(cube0, bbox, bbox, top, 0.5, 0.5)
+	squeeze(cube1, bbox, cube0, bot, 0.46, 0.421)
+}

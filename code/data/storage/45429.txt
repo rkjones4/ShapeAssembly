@@ -1,0 +1,48 @@
+Assembly Program_0 {
+	bbox = Cuboid(1.712, 0.878, 0.727, True)
+	Program_1 = Cuboid(1.712, 0.137, 0.727, True)
+	Program_2 = Cuboid(1.698, 0.746, 0.712, True)
+	attach(Program_2, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
+	squeeze(Program_1, bbox, Program_2, bot, 0.5, 0.5)
+}
+Assembly Program_1 {
+	bbox = Cuboid(1.712, 0.137, 0.727, True)
+	cube0 = Cuboid(0.032, 0.137, 0.669, True)
+	cube1 = Cuboid(1.712, 0.137, 0.032, True)
+	squeeze(cube0, bbox, bbox, top, 0.009, 0.5)
+	squeeze(cube1, bbox, bbox, top, 0.5, 0.022)
+	reflect(cube0, X)
+	reflect(cube1, Z)
+}
+Assembly Program_2 {
+	bbox = Cuboid(1.698, 0.746, 0.712, True)
+	cube0 = Cuboid(1.698, 0.032, 0.712, True)
+	Program_3 = Cuboid(0.491, 0.66, 0.671, True)
+	cube2 = Cuboid(1.688, 0.063, 0.702, True)
+	cube3 = Cuboid(1.644, 0.66, 0.046, True)
+	cube4 = Cuboid(1.548, 0.44, 0.032, True)
+	cube5 = Cuboid(1.668, 0.041, 0.683, True)
+	cube6 = Cuboid(0.702, 0.171, 0.612, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5)
+	attach(Program_3, bbox, 0.5, 0.0, 0.5, 0.161, 0.038, 0.509)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.499, 1.0, 0.502)
+	attach(cube3, bbox, 0.5, 0.0, 0.5, 0.5, 0.038, 0.077)
+	attach(cube6, bbox, 0.5, 0.0, 0.5, 0.5, 0.042, 0.55)
+	attach(cube6, Program_3, 0.0, 0.5, 0.5, 0.958, 0.135, 0.544)
+	attach(cube3, Program_3, 0.0, 0.5, 0.5, 0.0, 0.5, 0.042)
+	attach(cube4, Program_3, 0.0, 0.5, 0.5, 0.098, 0.659, 0.935)
+	attach(cube4, cube2, 0.5, 1.0, 0.5, 0.501, 0.006, 0.922)
+	attach(cube5, Program_3, 0.155, 0.5, 0.51, 0.5, 0.295, 0.501)
+	attach(cube5, cube3, 0.5, 0.5, 0.058, 0.5, 0.295, 0.485)
+	reflect(Program_3, X)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.491, 0.66, 0.671, True)
+	cube0 = Cuboid(0.046, 0.66, 0.644, True)
+	cube1 = Cuboid(0.468, 0.171, 0.612, True)
+	cube2 = Cuboid(0.041, 0.172, 0.594, True)
+	squeeze(cube0, bbox, bbox, top, 0.057, 0.48)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.476, 0.005, 0.544)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.958, 0.005, 0.517)
+	attach(cube1, cube0, 0.06, 0.501, 0.48, 0.495, 0.135, 0.547)
+}

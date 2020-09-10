@@ -1,0 +1,51 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.95, 1.493, 1.039, True)
+	Program_1 = Cuboid(0.95, 0.725, 0.994, True)
+	Program_2 = Cuboid(0.926, 0.139, 0.822, True)
+	Program_3 = Cuboid(0.911, 0.811, 0.2, False)
+	Program_4 = Cuboid(0.061, 0.446, 0.802, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.5, 0.007, 0.521)
+	squeeze(Program_3, bbox, Program_1, top, 0.512, 0.099)
+	attach(Program_2, Program_1, 0.499, 0.358, 0.389, 0.5, 1.0, 0.5)
+	attach(Program_4, Program_1, 0.5, 0.0, 0.5, 0.057, 0.919, 0.58)
+	attach(Program_2, Program_4, 0.045, 0.502, 0.488, 0.501, 0.174, 0.5)
+	reflect(Program_4, X)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.95, 0.725, 0.994, True)
+	cube0 = Cuboid(0.06, 0.701, 0.098, False)
+	cube1 = Cuboid(0.059, 0.649, 0.077, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.07, 0.955, 0.221)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.075, 0.017, 0.049)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.032, 0.002, 0.93)
+	reflect(cube0, X)
+	reflect(cube1, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.926, 0.139, 0.822, True)
+	cube0 = Cuboid(0.817, 0.133, 0.822, True)
+	cube1 = Cuboid(0.059, 0.086, 0.585, True)
+	squeeze(cube0, bbox, bbox, top, 0.5, 0.5)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.043, 0.016, 0.514)
+	reflect(cube1, X)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.911, 0.811, 0.2, True)
+	cube0 = Cuboid(0.073, 0.794, 0.15, True)
+	cube1 = Cuboid(0.762, 0.045, 0.112, False)
+	cube2 = Cuboid(0.75, 0.101, 0.092, False)
+	squeeze(cube0, bbox, bbox, top, 0.054, 0.623)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.487, 0.989, 0.342)
+	attach(cube2, cube0, 0.0, 0.5, 0.5, 0.777, 0.947, 0.036)
+	attach(cube1, cube0, 0.02, 0.039, 0.906, 1.0, 0.5, 0.5)
+	reflect(cube0, X)
+	translate(cube1, Y, 1, 0.27)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.061, 0.446, 0.802, True)
+	cube0 = Cuboid(0.06, 0.053, 0.756, True)
+	cube1 = Cuboid(0.06, 0.444, 0.092, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.486, 0.998, 0.471)
+	squeeze(cube1, bbox, bbox, top, 0.493, 0.935)
+	attach(cube0, cube1, 0.5, 0.5, 1.0, 0.507, 0.941, 0.559)
+}

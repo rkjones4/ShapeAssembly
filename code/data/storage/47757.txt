@@ -1,0 +1,33 @@
+Assembly Program_0 {
+	bbox = Cuboid(1.268, 1.24, 0.718, True)
+	Program_1 = Cuboid(1.119, 0.561, 0.616, True)
+	Program_2 = Cuboid(1.268, 0.863, 0.718, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.503, 0.0, 0.467)
+	attach(Program_2, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
+	attach(Program_1, Program_2, 0.5, 1.0, 0.5, 0.503, 0.213, 0.467)
+}
+Assembly Program_1 {
+	bbox = Cuboid(1.119, 0.561, 0.616, True)
+	cube0 = Cuboid(0.14, 0.383, 0.071, True)
+	cube1 = Cuboid(0.17, 0.496, 0.069, True)
+	cube2 = Cuboid(0.184, 0.559, 0.086, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.063, 0.002, 0.058)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.077, 0.0, 0.944)
+	squeeze(cube2, bbox, bbox, top, 0.918, 0.93)
+	reflect(cube0, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(1.268, 0.863, 0.718, True)
+	cube0 = Cuboid(0.837, 0.02, 0.028, True)
+	cube1 = Cuboid(0.208, 0.808, 0.615, True)
+	cube2 = Cuboid(1.268, 0.044, 0.718, True)
+	cube3 = Cuboid(0.848, 0.763, 0.557, True)
+	cube4 = Cuboid(0.914, 0.475, 0.085, True)
+	squeeze(cube1, bbox, bbox, top, 0.097, 0.467)
+	attach(cube3, bbox, 0.5, 1.0, 0.5, 0.507, 0.952, 0.426)
+	squeeze(cube2, bbox, cube3, top, 0.5, 0.5)
+	attach(cube4, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.914)
+	attach(cube0, cube1, 0.0, 0.5, 0.5, 0.97, 0.204, 0.932)
+	attach(cube0, cube3, 0.5, 0.5, 0.0, 0.495, 0.158, 1.0)
+	reflect(cube1, X)
+}

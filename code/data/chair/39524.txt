@@ -1,0 +1,51 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.631, 1.598, 0.701, True)
+	Program_1 = Cuboid(0.617, 0.764, 0.623, True)
+	Program_2 = Cuboid(0.62, 0.241, 0.689, True)
+	Program_3 = Cuboid(0.631, 0.693, 0.206, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.505, 0.001, 0.542)
+	attach(Program_3, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.147)
+	attach(Program_2, Program_1, 0.502, 0.094, 0.547, 0.5, 1.0, 0.5)
+	attach(Program_3, Program_2, 0.5, 0.0, 0.5, 0.496, 0.604, 0.137)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.617, 0.764, 0.623, True)
+	cube0 = Cuboid(0.075, 0.762, 0.075, True)
+	cube1 = Cuboid(0.076, 0.732, 0.076, True)
+	squeeze(cube0, bbox, bbox, top, 0.061, 0.075)
+	squeeze(cube1, bbox, bbox, top, 0.062, 0.938)
+	reflect(cube0, X)
+	reflect(cube1, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.62, 0.241, 0.689, True)
+	cube0 = Cuboid(0.538, 0.085, 0.491, True)
+	cube1 = Cuboid(0.62, 0.154, 0.689, True)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.5, 0.0, 0.5)
+	squeeze(cube0, bbox, cube1, top, 0.5, 0.593)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.631, 0.693, 0.206, True)
+	cube0 = Cuboid(0.631, 0.156, 0.206, True)
+	Program_4 = Cuboid(0.185, 0.477, 0.105, True)
+	cube2 = Cuboid(0.053, 0.47, 0.081, True)
+	cube3 = Cuboid(0.545, 0.08, 0.074, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.5, 1.0, 0.5)
+	attach(Program_4, bbox, 0.5, 0.0, 0.5, 0.222, 0.003, 0.555)
+	attach(cube2, bbox, 0.5, 0.0, 0.5, 0.439, 0.009, 0.562)
+	attach(cube3, cube0, 0.482, 1.0, 0.312, 0.5, 0.0, 0.5)
+	attach(Program_4, cube3, 0.5, 1.0, 0.5, 0.17, 0.271, 0.437)
+	attach(cube2, cube3, 0.5, 1.0, 0.5, 0.417, 0.238, 0.545)
+	reflect(Program_4, X)
+	translate(cube2, X, 1, 0.472)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.185, 0.477, 0.105, True)
+	cube0 = Cuboid(0.06, 0.476, 0.085, True)
+	cube1 = Cuboid(0.045, 0.471, 0.091, True)
+	cube2 = Cuboid(0.055, 0.471, 0.085, True)
+	squeeze(cube0, bbox, bbox, top, 0.163, 0.593)
+	attach(cube1, bbox, 0.5, 1.0, 0.5, 0.449, 0.992, 0.454)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.531, 0.005, 0.546)
+	squeeze(cube2, bbox, bbox, top, 0.845, 0.494)
+}

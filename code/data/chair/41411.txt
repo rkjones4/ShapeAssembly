@@ -1,0 +1,50 @@
+Assembly Program_0 {
+	bbox = Cuboid(0.755, 1.624, 0.948, True)
+	Program_1 = Cuboid(0.688, 0.618, 0.79, True)
+	Program_2 = Cuboid(0.74, 0.221, 0.801, True)
+	Program_3 = Cuboid(0.698, 1.203, 0.095, False)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.474, 0.0, 0.583)
+	attach(Program_3, bbox, 0.5, 1.0, 0.5, 0.481, 0.995, 0.05)
+	attach(Program_3, Program_1, 0.5, 0.0, 0.5, 0.508, 0.693, 0.105)
+	attach(Program_2, Program_1, 0.478, 0.278, 0.507, 0.5, 1.0, 0.5)
+}
+Assembly Program_1 {
+	bbox = Cuboid(0.688, 0.618, 0.79, True)
+	Program_4 = Cuboid(0.096, 0.584, 0.788, True)
+	cube1 = Cuboid(0.517, 0.126, 0.076, True)
+	attach(Program_4, bbox, 0.5, 0.0, 0.5, 0.07, 0.0, 0.5)
+	attach(cube1, Program_4, 0.0, 0.5, 0.5, 0.988, 0.64, 0.076)
+	reflect(Program_4, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(0.74, 0.221, 0.801, True)
+	cube0 = Cuboid(0.691, 0.16, 0.8, True)
+	cube1 = Cuboid(0.112, 0.06, 0.791, True)
+	cube2 = Cuboid(0.262, 0.026, 0.06, True)
+	cube3 = Cuboid(0.056, 0.123, 0.783, False)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.467, 0.989, 0.501)
+	squeeze(cube1, bbox, cube0, bot, 0.094, 0.506)
+	attach(cube2, cube0, 0.5, 0.5, 0.0, 0.365, 0.014, 0.926)
+	attach(cube2, cube1, 0.0, 0.5, 0.5, 0.979, 0.624, 0.963)
+	attach(cube3, cube0, 0.219, 0.804, 0.491, 1.0, 0.5, 0.5)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.698, 1.203, 0.095, True)
+	cube0 = Cuboid(0.024, 1.032, 0.052, True)
+	cube1 = Cuboid(0.061, 0.688, 0.08, True)
+	cube2 = Cuboid(0.683, 0.18, 0.058, True)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.164, 0.0, 0.271)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.49, 0.999, 0.303)
+	attach(cube0, cube2, 0.5, 1.0, 0.5, 0.168, 0.056, 0.505)
+	attach(cube1, cube2, 0.5, 1.0, 0.5, 0.045, 0.186, 0.7)
+	translate(cube0, X, 6, 0.653)
+	reflect(cube1, X)
+}
+Assembly Program_4 {
+	bbox = Cuboid(0.096, 0.584, 0.788, True)
+	cube0 = Cuboid(0.094, 0.583, 0.122, True)
+	cube1 = Cuboid(0.044, 0.076, 0.555, True)
+	squeeze(cube0, bbox, bbox, top, 0.5, 0.078)
+	attach(cube1, cube0, 0.5, 0.5, 0.0, 0.276, 0.655, 0.969)
+	reflect(cube0, Z)
+}

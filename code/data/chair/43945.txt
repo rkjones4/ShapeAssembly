@@ -1,0 +1,47 @@
+Assembly Program_0 {
+	bbox = Cuboid(1.656, 1.128, 1.223, True)
+	Program_1 = Cuboid(1.652, 0.933, 1.219, True)
+	Program_2 = Cuboid(1.368, 0.642, 1.179, True)
+	cube2 = Cuboid(0.885, 0.907, 0.255, True)
+	cube3 = Cuboid(0.266, 0.918, 1.135, True)
+	attach(Program_1, bbox, 0.5, 0.0, 0.5, 0.499, 0.004, 0.499)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.496, 0.997, 0.144)
+	attach(cube3, bbox, 0.5, 1.0, 0.5, 0.159, 0.998, 0.495)
+	attach(cube2, Program_1, 0.5, 0.5, 1.0, 0.496, 0.714, 0.248)
+	attach(cube3, Program_1, 1.0, 0.5, 0.5, 0.234, 0.706, 0.495)
+	attach(Program_2, Program_1, 0.508, 0.53, 1.0, 0.5, 0.5, 1.0)
+	attach(Program_2, cube3, 0.0, 0.5, 0.5, 0.05, 0.269, 0.521)
+	reflect(cube3, X)
+}
+Assembly Program_1 {
+	bbox = Cuboid(1.652, 0.933, 1.219, True)
+	Program_3 = Cuboid(0.296, 0.93, 1.211, True)
+	cube1 = Cuboid(1.078, 0.049, 0.028, True)
+	cube2 = Cuboid(1.409, 0.079, 0.052, True)
+	squeeze(Program_3, bbox, bbox, top, 0.093, 0.5)
+	attach(cube2, bbox, 0.5, 1.0, 0.5, 0.497, 0.988, 0.022)
+	attach(cube2, Program_3, 0.0, 0.5, 0.5, 0.392, 0.943, 0.018)
+	attach(cube1, Program_3, 0.0, 0.5, 0.5, 0.971, 0.415, 0.022)
+	reflect(Program_3, X)
+}
+Assembly Program_2 {
+	bbox = Cuboid(1.368, 0.642, 1.179, True)
+	cube0 = Cuboid(0.916, 0.572, 0.949, True)
+	cube1 = Cuboid(1.368, 0.082, 1.142, True)
+	attach(cube0, bbox, 0.5, 1.0, 0.5, 0.499, 0.999, 0.598)
+	attach(cube1, bbox, 0.5, 0.0, 0.5, 0.5, 0.012, 0.485)
+	attach(cube0, cube1, 0.5, 0.0, 0.5, 0.498, 0.729, 0.617)
+}
+Assembly Program_3 {
+	bbox = Cuboid(0.296, 0.93, 1.211, True)
+	cube0 = Cuboid(0.081, 0.87, 0.052, False)
+	cube1 = Cuboid(0.119, 0.046, 1.186, False)
+	cube2 = Cuboid(0.081, 0.882, 0.052, True)
+	cube3 = Cuboid(0.156, 0.05, 1.193, False)
+	attach(cube0, bbox, 0.5, 0.0, 0.5, 0.856, 0.0, 0.025)
+	squeeze(cube2, bbox, bbox, top, 0.725, 0.97)
+	attach(cube3, bbox, 0.5, 1.0, 0.5, 0.441, 0.988, 0.504)
+	attach(cube3, cube2, 0.786, 0.499, 0.977, 0.5, 1.0, 0.5)
+	attach(cube1, cube0, 0.874, 0.479, 0.019, 0.189, 0.438, 0.584)
+	attach(cube1, cube2, 0.89, 0.481, 0.982, 0.172, 0.436, 0.395)
+}
