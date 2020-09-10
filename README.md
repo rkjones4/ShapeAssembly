@@ -99,7 +99,3 @@ generate.py -> takes a collection of attributes and formulate a ShapeAssembly pr
 
 Code was tested on Ubuntu 18.04 with pytorch 3.7. env.yml should contain a further list of all the conda packages/versions used to run the code.
 
-## License
-
-MIT License
-
