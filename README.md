@@ -81,7 +81,7 @@ We provide our parsed ShapeAssembly datasets for chairs, tables and storage cate
 
 To re-generate these datasets, or to run our program parsing procedure on other part-graphs, please use the gen_data.py script in the code directory.
 
-If [part-graph json files](https://github.com/paulguerrero/structureprog/tree/master/data/partnetdata) are placed in /home/{USER}/pnhier/{category} for a given category, ShapeAssembly programs can be generated with a command like:
+If [part-graph json files](https://github.com/daerduoCarey/structurenet/tree/master/data/partnetdata) are placed in /home/{USER}/pnhier/{category} for a given category, ShapeAssembly programs can be generated with a command like:
 
 ```
 python3 gen_data.py {category}
