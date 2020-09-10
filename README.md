@@ -9,10 +9,8 @@ We present a deep generative model which learns to write novel programs in Shape
 
 ## About the paper
 
-Arxiv Version: https://arxiv.org/abs/xxx
-
+Paper: https://rkjones4.github.io/pdf/shapeAssembly.pdf
 Accepted by [Siggraph Asia 2020](https://sa2020.siggraph.org/).
-
 Project Page: https://rkjones4.github.io/shapeAssembly.html
 
 ## Citations
@@ -45,7 +43,7 @@ from the code directory. Or from a python shell we can run:
 > sa.run_local(lines, 'executed.obj')
 ```
 
-The interace for executing a non-hierarhical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
+The interace for executing a non-hierarchical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
 
 ## Model Training/Evaluation
 
