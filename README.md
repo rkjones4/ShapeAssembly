@@ -35,14 +35,14 @@ The ShapeAssembly DSL is defined in code/ShapeAssembly.py . Within this file, th
 
 For instance, the file code/data/chair/173.txt describes a chair from our training set. To execute this program, and write the resulting shape to executed.obj, from the command line we can run:
 ```
-python3 ShapeAssembly.py run_local data/chair/173.txt executed.obj
+python3 ShapeAssembly.py run data/chair/173.txt executed.obj
 ```
 from the code directory. Or from a python shell we can run:
 ```
 > from ShapeAssembly import ShapeAssembly
 > sa = ShapeAssembly()
 > lines = sa.load_lines('data/chair/173.txt')
-> sa.run_local(lines, 'executed.obj')
+> sa.run(lines, 'executed.obj')
 ```
 
 The interace for executing a non-hierarchical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
