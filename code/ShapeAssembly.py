@@ -26,31 +26,10 @@ from copy import deepcopy
 
 """
 
-USE_GPU = False
-
-if USE_GPU:
-    resource = faiss.StandardGpuResources()
-    device = torch.device("cuda")
-else:
-    device = torch.device("cpu")
-
-# When fitting to unstructured geometry, set this to True (affects aligned attachments)
-DOING_FIT = False
-
 # Params controlling execution behavior
 EPS = .01
 SMALL_EPS = 1e-4
 COS_DIST_THRESH = 0.9
-
-# CONSTANTS For PC Intersection
-DIM = 10
-a = (torch.arange(DIM).float()/(DIM-1))
-b = a.unsqueeze(0).unsqueeze(0).repeat(DIM, DIM, 1)
-c = a.unsqueeze(0).unsqueeze(2).repeat(DIM, 1, DIM)
-d = a.unsqueeze(1).unsqueeze(2).repeat(1, DIM, DIM)
-g = torch.stack((b,c,d), dim=3).view(-1, 3)
-s_xyz = g.unsqueeze(0).to(device)
-
 
 
 # Helper function: write mesh to out file
@@ -61,7 +40,7 @@ def writeObj(verts, faces, outfile):
         for a, b, c in faces.tolist():
             f.write(f"f {a+1} {b+1} {c+1}\n")
 
-def samplePC(cubes):
+def samplePC(cubes, xyz):
     cube_geom = []
     for c in cubes:
         cube_geom.append(torch.cat((
@@ -73,13 +52,12 @@ def samplePC(cubes):
             c['ydir']
         )))
         
-    scene_geom = torch.stack([c for c in cube_geom]).to(device)
+    scene_geom = torch.stack([c for c in cube_geom])
     ind_to_pc = {}
     
     for i in range(0, scene_geom.shape[0]):
-        xyz = s_xyz
             
-        s_inds = (torch.ones(1,xyz.shape[1]) * i).long().to(device)
+        s_inds = (torch.ones(1,xyz.shape[1]) * i).long()
         
         s_r = torch.cat(
             (
@@ -96,17 +74,7 @@ def samplePC(cubes):
 
     res = {}
     for key in ind_to_pc:
-        index_cpu = faiss.IndexFlatL2(3)
-
-        if USE_GPU:
-            index = faiss.index_cpu_to_gpu(
-                resource,
-                torch.cuda.current_device(),
-                index_cpu
-            )
-        else:
-            index = index_cpu
-            
+        index = faiss.IndexFlatL2(3)            
         index.add(
             np.ascontiguousarray(ind_to_pc[key].cpu().numpy())
         )
@@ -132,7 +100,7 @@ def getRotMatrix(angle, normal):
 
 
 # Helper function: Find a minimum rotation from the current direction to the target direction
-def findMinRotation(cur, target, device=device):
+def findMinRotation(cur, target):
         
     assert(cur.norm() != 0)
     assert(target.norm() != 0)
@@ -144,9 +112,9 @@ def findMinRotation(cur, target, device=device):
 
     # co-linear
     if normal.norm() == 0:
-        r_x = torch.tensor([[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0, 1.0, 0.0]], device=device)
-        r_y = torch.tensor([[0.0, 0, 1.0], [0.0, 1.0, 0.0], [ -1.0, 0.0, 0.0]], device=device)
-        r_z = torch.tensor([[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]], device=device)
+        r_x = torch.tensor([[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0, 1.0, 0.0]])
+        r_y = torch.tensor([[0.0, 0, 1.0], [0.0, 1.0, 0.0], [ -1.0, 0.0, 0.0]])
+        r_z = torch.tensor([[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]])
             
         if torch.dot(r_x @ ncur, ncur) != 0:
             cnormal = r_x @ ncur
@@ -157,14 +125,14 @@ def findMinRotation(cur, target, device=device):
 
         assert(cnormal.norm() != 0)
         nnormal = cnormal / cnormal.norm()
-        angle = torch.tensor(math.pi, device=device)
+        angle = torch.tensor(math.pi)
 
     else:
         
         nnormal = normal / normal.norm()
         angle = torch.acos(torch.dot(ncur, ntarget))
         if angle == 0 or torch.isnan(angle).any():
-            return torch.eye(3, device=device)
+            return torch.eye(3)
 
     return getRotMatrix(angle, nnormal)
 
@@ -174,15 +142,14 @@ class Cuboid():
     """
     Cuboids are the base (and only) objects of a ShapeAssembly program. Dims are their dimensions, pos is the center of the cuboid, rfnorm (right face), tfnorm (top face) and ffnorm (front face) specify the orientation of the cuboid. The bounding volume is just a non-visible cuboid. Cuboids marked with the aligned flag behavior differently under attachment operations. 
     """
-    def __init__(self, name, aligned = False, vis = True, device=device):
-        self.device=device
+    def __init__(self, name, aligned = False, vis = True):
         
         # The default cube is unit, axis-aligned, centered at the origin
-        self.dims =  torch.tensor([1.0,1.0,1.0], device=self.device)
-        self.pos = torch.tensor([0.0,0.0,0.0], device=self.device)
-        self.rfnorm = torch.tensor([1.0,0.0,0.0], device=self.device)
-        self.tfnorm = torch.tensor([0.0,1.0,0.0], device=self.device)
-        self.ffnorm = torch.tensor([0.0,0.0,1.0], device=self.device)
+        self.dims =  torch.tensor([1.0,1.0,1.0])
+        self.pos = torch.tensor([0.0,0.0,0.0])
+        self.rfnorm = torch.tensor([1.0,0.0,0.0])
+        self.tfnorm = torch.tensor([0.0,1.0,0.0])
+        self.ffnorm = torch.tensor([0.0,0.0,1.0])
         # Keep track of all attachment obligations this cube has
         self.attachments = []
         self.move_atts = []
@@ -199,6 +166,13 @@ class Cuboid():
         self.tfnorm = rotation @ self.tfnorm
         self.ffnorm = rotation @ self.ffnorm
 
+    def flipCuboid(self, a_ind):
+        transform = torch.ones(3)
+        transform[a_ind] *= -1 
+        self.pos = transform * self.pos
+        self.rfnorm = -1 * (transform * self.rfnorm)
+        self.tfnorm = -1 * (transform * self.tfnorm)
+        self.ffnorm = -1 * (transform * self.ffnorm)
         
     # Get the corners of the cuboid
     def getCorners(self):
@@ -236,18 +210,18 @@ class Cuboid():
     # Get the relative position of global poiunt gpt
     def getRelPos(self, gpt, normalize = False):
         O = self.getPos(
-            torch.tensor(0.).to(device),
-            torch.tensor(0.).to(device),
-            torch.tensor(0.).to(device)
+            torch.tensor(0.),
+            torch.tensor(0.),
+            torch.tensor(0.)
         )
         A = torch.stack([
-            self.dims[0] * self.rfnorm,
-            self.dims[1] * self.tfnorm,
-            self.dims[2] * self.ffnorm
+            self.dims[0].clone() * self.rfnorm.clone(),
+            self.dims[1].clone() * self.tfnorm.clone(),
+            self.dims[2].clone() * self.ffnorm.clone()
         ]).T
 
         B = gpt - O
-        p = torch.tensor(np.linalg.solve(A.detach().cpu(), B.detach().cpu())).to(device)
+        p = A.inverse() @ B
 
         if normalize:
             return torch.clamp(p, 0.0, 1.0)
@@ -261,9 +235,9 @@ class Cuboid():
     # Make the cuboid bigger by an added factor of scale to a specific dimension
     def increaseDim(self, dim, inc):
         dim_to_scale = {            
-            "height": torch.tensor([0.0, 1.0, 0.0], device=self.device),
-            "width": torch.tensor([0.0, 0.0, 1.0], device=self.device),
-            "length": torch.tensor([1.0, 0.0, 0.0], device=self.device),
+            "height": torch.tensor([0.0, 1.0, 0.0]),
+            "width": torch.tensor([0.0, 0.0, 1.0]),
+            "length": torch.tensor([1.0, 0.0, 0.0])
         }
         s = dim_to_scale[dim] * inc
         self.dims += s
@@ -293,7 +267,7 @@ class Cuboid():
     def getTris(self):
         if self.is_visible:
             verts = self.getCorners()
-            faces = torch.tensor(self.getTriFaces(), dtype=torch.long, device=self.device)
+            faces = torch.tensor(self.getTriFaces(), dtype=torch.long)
             return verts, faces
         return None, None
 
@@ -387,18 +361,39 @@ class Program():
     A program maintains a representation of entire shape, including all of the member cuboids
     and all of the attachment points. The execute function is the entrypoint of text programs.
     """
-    def __init__(self, cuboids = {}, device=device):
-        self.device = device
+    def __init__(self, cuboids = {}):
         self.cuboids = self.getBoundBox()
         self.cuboids.update(cuboids)
         self.commands = []
         self.parameters = []
-        self.constraints = []
         self.att_points = {}
+
+        self.resource = None
         
+        # CONSTANTS For PC Intersection
+        DIM = 10
+        a = (torch.arange(DIM).float()/(DIM-1))
+        b = a.unsqueeze(0).unsqueeze(0).repeat(DIM, DIM, 1)
+        c = a.unsqueeze(0).unsqueeze(2).repeat(DIM, 1, DIM)
+        d = a.unsqueeze(1).unsqueeze(2).repeat(1, DIM, DIM)
+        g = torch.stack((b,c,d), dim=3).view(-1, 3)
+        self.s_xyz = g.unsqueeze(0)
+
+    def flip(self, flip_axis):
+        if flip_axis == 'X':
+            axis = 0
+        elif flip_axis == 'Y':
+            axis = 1
+        elif flip_axis == 'Z':
+            axis = 2
+        for name, c in self.cuboids.items():
+            if name == 'bbox':
+                continue
+            c.flipCuboid(axis)
+            
     # Each program starts off with an invisible bounding box
     def getBoundBox(self):
-        bbox = Cuboid("bbox", aligned = True, vis=False, device=self.device)
+        bbox = Cuboid("bbox", aligned = True, vis=False)
                 
         return {
             "bbox": bbox
@@ -413,8 +408,8 @@ class Program():
         
         cuboids = list(self.cuboids.values())
         
-        verts = torch.tensor([],dtype=torch.float, device=self.device)
-        faces = torch.tensor([],dtype=torch.long, device=self.device)
+        verts = torch.tensor([],dtype=torch.float)
+        faces = torch.tensor([],dtype=torch.long)
         
         for cube in cuboids[1:]:            
             v, f = cube.getTris()
@@ -440,9 +435,9 @@ class Program():
         aligned = False
 
         params = s[1].split(',')
-        dim0 = torch.tensor(float(params[0]), device=self.device)
-        dim1 = torch.tensor(float(params[1]), device=self.device)
-        dim2 = torch.tensor(float(params[2]), device=self.device)
+        dim0 = torch.tensor(float(params[0]))
+        dim1 = torch.tensor(float(params[1]))
+        dim2 = torch.tensor(float(params[2]))
         if len(params) == 4:
             aligned = ast.literal_eval(params[3].strip())
         assert isinstance(aligned, bool), 'aligned not a bool'
@@ -461,7 +456,6 @@ class Program():
             c = Cuboid(
                 parse[0],
                 aligned = parse[4],
-                device=self.device
             )
             
             c.scaleCuboid(torch.stack((parse[1], parse[2], parse[3])))
@@ -556,7 +550,7 @@ class Program():
         if nb.norm() == 0 or nc.norm() == 0 or (nb-nc).norm() < SMALL_EPS:
             return True
 
-        rot_mat = findMinRotation(nb, nc, device=self.device)
+        rot_mat = findMinRotation(nb, nc)
         ap.cuboid.rotateCuboid(rot_mat)
         
         # Reset the position of the cuboid such that the attachments are satisfied
@@ -729,22 +723,22 @@ class Program():
         ind_to_pc = samplePC(
             [
                 {
-                    'xd': a.dims[0].detach().cuda(),
-                    'yd': a.dims[1].detach().cuda(),
-                    'zd': a.dims[2].detach().cuda(),
-                    'center': a.pos.detach().cuda(),
-                    'xdir': a.rfnorm.detach().cuda(),
-                    'ydir': a.tfnorm.detach().cuda()
+                    'xd': a.dims[0].detach(),
+                    'yd': a.dims[1].detach(),
+                    'zd': a.dims[2].detach(),
+                    'center': a.pos.detach(),
+                    'xdir': a.rfnorm.detach(),
+                    'ydir': a.tfnorm.detach()
                 },
                 {
-                    'xd': b.dims[0].detach().cuda(),
-                    'yd': b.dims[1].detach().cuda(),
-                    'zd': b.dims[2].detach().cuda(),
-                    'center': b.pos.detach().cuda(),
-                    'xdir': b.rfnorm.detach().cuda(),
-                    'ydir': b.tfnorm.detach().cuda()
+                    'xd': b.dims[0].detach(),
+                    'yd': b.dims[1].detach(),
+                    'zd': b.dims[2].detach(),
+                    'center': b.pos.detach(),
+                    'xdir': b.rfnorm.detach(),
+                    'ydir': b.tfnorm.detach()
                 }
-            ]
+            ], self.s_xyz
         )
 
         a_pc = ind_to_pc[0][0].unsqueeze(0)
@@ -768,10 +762,9 @@ class Program():
 
         return a_pt.cpu(), b_pt.cpu()
         
-    # For aligned cuboids with a previous attachments, see if increasing any dimension would cause the fit to be improved
-    # Note -> this operation is likely non differentiable
+    # For aligned cuboids with a previous attachments,
+    # see if increasing any dimension would cause the fit to be improved
     def aligned_attach(self, ap, oap):
-
         b, c = self.getClosestPoints(ap.cuboid, oap.cuboid)
 
         if b is None or c is None:
@@ -870,12 +863,12 @@ class Program():
         return (
             args[0],
             args[1],
-            torch.tensor(float(args[2])).to(device),
-            torch.tensor(float(args[3])).to(device),
-            torch.tensor(float(args[4])).to(device),
-            torch.tensor(float(args[5])).to(device),
-            torch.tensor(float(args[6])).to(device),
-            torch.tensor(float(args[7])).to(device)
+            torch.tensor(float(args[2])),
+            torch.tensor(float(args[3])),
+            torch.tensor(float(args[4])),
+            torch.tensor(float(args[5])),
+            torch.tensor(float(args[6])),
+            torch.tensor(float(args[7]))
         )
 
             
@@ -941,11 +934,11 @@ class Program():
     def getRefDir(self, d):
         bbox = self.cuboids['bbox']
         if d == 'X':
-            return bbox.rfnorm
+            return bbox.rfnorm.clone()
         elif d == 'Y':
-            return bbox.tfnorm
+            return bbox.tfnorm.clone()
         elif d == 'Z':
-            return bbox.ffnorm
+            return bbox.ffnorm.clone()
         else:
             assert False, 'bad reflect argument'
 
@@ -953,11 +946,11 @@ class Program():
     def getTransDir(self, d):
         bbox = self.cuboids['bbox']
         if d == 'X':
-            return bbox.rfnorm, bbox.dims[0]
+            return bbox.rfnorm.clone(), bbox.dims[0].clone()
         elif d == 'Y':
-            return bbox.tfnorm, bbox.dims[1]
+            return bbox.tfnorm.clone(), bbox.dims[1].clone()
         elif d == 'Z':
-            return bbox.ffnorm, bbox.dims[2]
+            return bbox.ffnorm.clone(), bbox.dims[2].clone()
         else:
             assert False, 'bad reflect argument'
             
@@ -1003,54 +996,48 @@ class Program():
         return torch.cat((rotmat[:,:3], lc), dim = 1)
     
     # Executes a reflect line by making + executing new Cuboid and attach lines
-    def executeReflect(self, parse):
-        new_lines = []
+    def executeReflect(self, parse):        
         c = self.cuboids[parse[0]]        
         assert c.name != "bbox", 'tried to move the bbox'
-        rdir = self.getRefDir(parse[1])
-
-        cnum = len(self.cuboids) - 1
         
-        cline = f"cube{cnum} = Cuboid({c.dims[0].item()}, {c.dims[1].item()}, {c.dims[2].item()}, {c.aligned})"
-        self.execute(cline)
-        new_lines.append(cline)
+        rdir = self.getRefDir(parse[1])
+        cnum = len(self.cuboids) - 1
+
+        self.executeCuboid([f'cube{cnum}', c.dims[0].clone(), c.dims[1].clone(), c.dims[2].clone(), c.aligned])
+                        
         self.cuboids[f'cube{cnum}'].parent = c.name
         self.cuboids[f'cube{cnum}'].parent_axis = parse[1]
         
-        attlines = []
-
         atts = c.move_atts
         for att in atts:
-            x = att[0].x
-            y = att[0].y
-            z = att[0].z
-
+            
             if parse[1] == 'X':
-                x = 1 - x
+                x = 1 - att[0].x.clone()
+            else:
+                x = att[0].x.clone()
 
-            elif parse[1] == 'Y':
-                y = 1 - y
+            if parse[1] == 'Y':
+                y = 1 - att[0].y.clone()
+            else:
+                y = att[0].y.clone()
 
-            elif parse[1] == 'Z':
-                z = 1 - z
+            if parse[1] == 'Z':
+                z = 1 - att[0].z.clone()
+            else:
+                z = att[0].z.clone()
             
             n = att[2]
 
-            cpt = att[0].getPos()
-            rpt = self.reflect_point(cpt, self.cuboids['bbox'].pos, rdir)
+            cpt = att[0].getPos().clone()
+            rpt = self.reflect_point(cpt, self.cuboids['bbox'].pos.clone(), rdir)
             
             rrpt = self.cuboids[n].getRelPos(rpt, True)
             
-            attline = f"attach(cube{cnum}, {n}, {x}, {y}, {z}, {rrpt[0]}, {rrpt[1]}, {rrpt[2]})"
-
-            self.execute(attline)
-            new_lines.append(attline)
-            
-        return new_lines
+            self.executeAttach([f'cube{cnum}', f'{n}', x, y, z, rrpt[0], rrpt[1], rrpt[2]])
             
     # Executes a translate line by making + executing new Cuboid and attach lines
     def executeTranslate(self, parse):
-        new_lines = []
+        
         c = self.cuboids[parse[0]]
         assert c.name != "bbox", 'tried to move the bbox'
         tdir, td = self.getTransDir(parse[1])
@@ -1062,13 +1049,9 @@ class Program():
         
             cnum = len(self.cuboids) - 1
         
-            cline = f"cube{cnum} = Cuboid({c.dims[0].item()}, {c.dims[1].item()}, {c.dims[2].item()}, {c.aligned})"
-            self.execute(cline)
-            new_lines.append(cline)
+            self.executeCuboid([f'cube{cnum}', c.dims[0].clone(), c.dims[1].clone(), c.dims[2].clone(), c.aligned]) 
             self.cuboids[f'cube{cnum}'].parent = c.name
             
-            attlines = []
-
             atts = c.move_atts
             for att in atts:
                 x = att[0].x
@@ -1080,12 +1063,9 @@ class Program():
                 rpt = cpt + (tdir * scale * i)
 
                 rrpt = self.cuboids[n].getRelPos(rpt, True)
-                
-                attline = f"attach(cube{cnum}, {n}, {x}, {y}, {z}, {rrpt[0]}, {rrpt[1]}, {rrpt[2]})"
-                self.execute(attline)
-                new_lines.append(attline)
 
-        return new_lines
+                self.executeAttach([f'cube{cnum}', f'{n}', x, y, z, rrpt[0], rrpt[1], rrpt[2]])
+
 
     # Helper function for finding opposite face
     def getOppFace(self, face):
@@ -1102,12 +1082,12 @@ class Program():
     # Local coordinate frame to center of face conversion
     def getFacePos(self, face):
         ft = {
-            'right': ([1.0, 0.5, 0.5], 0, 0),
-            'left': ([0.0, 0.5, 0.5], 0, 1),
-            'top': ([.5, 1.0, 0.5], 1, 0),
-            'bot': ([.5, 0.0, 0.5], 1, 1),
-            'front': ([.5, 0.5, 1.0], 2, 0),
-            'back': ([.5, 0.5, 0.0], 2, 1),
+            'right': ([1.0, 0.5, 0.5], 0, 0.),
+            'left': ([0.0, 0.5, 0.5], 0, 1.),
+            'top': ([.5, 1.0, 0.5], 1, 0.),
+            'bot': ([.5, 0.0, 0.5], 1, 1.),
+            'front': ([.5, 0.5, 1.0], 2, 0.),
+            'back': ([.5, 0.5, 0.0], 2, 1.),
         }
         return ft[face]
 
@@ -1116,16 +1096,18 @@ class Program():
         at1, ind, val = self.getFacePos(face)
         # bbox is "flipped"
         if is_bbox:
-            val = 1-val
-        at2 = [0, 0, 0]
+            rval = 1-val
+        else:
+            rval = val
+        at2 = torch.zeros(3).float()
         q = [u, v] 
         for i in range(3):
             if i == ind:
-                at2[i] = val
+                at2[i] = rval
             else:
                 at2[i] = q.pop(0)
 
-        return at1, at2
+        return torch.tensor(at1).float(), at2
 
     # Executes a squeeze line by making + executing new Cuboid and attach lines
     def executeSqueeze(self, parse):
@@ -1140,12 +1122,8 @@ class Program():
             oface, parse[4], parse[5], parse[2] == 'bbox'
         )        
             
-        att1line = f"attach({parse[0]}, {parse[1]}, {atc1[0]}, {atc1[1]}, {atc1[2]}, {ato1[0]}, {ato1[1]}, {ato1[2]})"
-        att2line = f"attach({parse[0]}, {parse[2]}, {atc2[0]}, {atc2[1]}, {atc2[2]}, {ato2[0]}, {ato2[1]}, {ato2[2]})"
-        
-        self.execute(att1line)
-        self.execute(att2line)
-        return [att1line, att2line]
+        self.executeAttach([parse[0], parse[1], atc1[0], atc1[1], atc1[2], ato1[0], ato1[1], ato1[2]])
+        self.executeAttach([parse[0], parse[2], atc2[0], atc2[1], atc2[2], ato2[0], ato2[1], ato2[2]])
 
     # Clear cuboids + attachment points, but keep the commands that made them in memory
     def resetState(self):
@@ -1153,17 +1131,15 @@ class Program():
         self.att_points = {}
         
     # Supported commands and their execution functions
-    # Commands are first parsed to get their type + parameters. These are then recorded in updateCommandsAndParams. Finally, the line is executed by calling to the appropriate execute function 
+    # Commands are first parsed to get their type + parameters. Then, the line is executed by calling to the appropriate execute function 
     def execute(self, line):
         res = None
         if "Cuboid(" in line:
             parse = self.parseCuboid(line)
-            self.updateCommandsAndParams("cuboid", parse)
             self.executeCuboid(parse)
         
         elif "attach(" in line:
             parse = self.parseAttach(line)
-            self.updateCommandsAndParams("attach", parse)
             self.executeAttach(parse)    
 
         elif "reflect(" in line:
@@ -1181,61 +1157,59 @@ class Program():
         # return any new lines generated by macros
         return res
             
-    def updateCommandsAndParams(self, command, parse):
-        pl = []
-
-        if DOING_FIT:
-            if command == 'attach':
-                # Don't move aligned cuboids more than once during fitting 
-                if self.cuboids[parse[0]].aligned and len(self.cuboids[parse[0]].attachments) > 0:
-                    return
-        
-        for i, p in enumerate(parse):
-            if p is None or isinstance(p, str):
-                pl.append(str(p))
-            elif isinstance(p, bool):
-                pl.append(str(p))
-            else:                    
-                pl.append(len(self.parameters))
-                self.parameters.append(p)
-
-        # Constraints influence the bounds that the parameters can take during optimization
-        
-        if command == 'cuboid':
-            self.constraints += [0, 0, 0]
-            
-        elif command == 'attach' and parse[1] != 'bbox':
-            self.constraints += [1, 1, 1, 1, 1, 1]
-
-        elif command == 'attach' and parse[1] == 'bbox' and parse[6] > .5:
-            self.constraints += [1, 1, 1, 1, 2, 1]
-
-        elif command == 'attach' and parse[1] == 'bbox' and parse[6] <= .5:
-            self.constraints += [1, 1, 1, 1, 3, 1]
-                    
-        self.commands.append((command, pl))
-
     # To re-run a program given a set of commands and parameters. Often used during fitting to unstructurd geometry. 
-    def runProgram(self, commands, parameters):
+    def runProgram(self, param_lines):
         self.resetState()
 
         command_to_func = {
-            "cuboid": self.executeCuboid,
+            "Cuboid": self.executeCuboid,
             "attach": self.executeAttach,
+            "squeeze": self.executeSqueeze,
+            "translate": self.executeTranslate,
+            "reflect": self.executeReflect
         }
-        for c in commands:
-            func = command_to_func[c[0]]
-            parse = [
-                parameters[e] if not (e is None or isinstance(e, str)) else e
-                for e in c[1]                
-            ]
-            if c[0] == 'cuboid':
-                parse[4] = ast.literal_eval(parse[4])
-                assert isinstance(parse[4], bool)
+        
+        for command, parse in param_lines:
+            func = command_to_func[command]
             func(parse)
 
 # ** Helper Functions FOR ShapeAssembly Class **
 
+def lineToAttrs(line):
+    P = Program()
+    if "Cuboid(" in line:
+        func = "Cuboid"
+        parse = list(P.parseCuboid(line))
+        param_inds = [1,2,3]                
+        
+    elif "attach(" in line:
+        func = "attach"
+        parse = list(P.parseAttach(line))
+        param_inds = [2,3,4,5,6,7]
+        
+    elif "reflect(" in line:
+        func = "reflect"
+        parse = list(P.parseReflect(line))
+        param_inds = []
+        
+    elif "translate(" in line:
+        func = "translate"
+        parse = list(P.parseTranslate(line))
+        param_inds = [3]
+
+    elif "squeeze(" in line:
+        func = "squeeze"
+        parse = list(P.parseSqueeze(line))
+        param_inds = [4,5]
+        
+    tensor = torch.nn.Parameter(
+        torch.tensor([parse[i] for i in param_inds])
+    )
+    for i,j in enumerate(param_inds):
+        parse[j] = tensor[i] 
+
+    return func, tensor, parse
+        
 def make_hier_prog(lines):
     all_progs = {}
     root_name = None
@@ -1280,7 +1254,7 @@ def make_hier_prog(lines):
         node['children'] = []
             
         for child in children:
-            c = {}#None
+            c = {}
             if child is not None:
                 c = {'name': child}
                 q.append(c)
@@ -1293,38 +1267,8 @@ def make_function(name, args):
     args = [str(arg) for arg in args]
     return '{}({})'.format(name, ", ".join(args))
 
-# Sub-programs that are created through reflections need to special treatment as their local geometry also needs to undergo the reflection. 
-def flipRefSubProg(lines, axis):
-    if axis == 'X':
-        find = 0
-    elif axis == 'Y':
-        find = 1
-    elif axis == 'Z':
-        find = 2
-                
-    ex_lines = []
-    flip_lines = []
-
-    P = Program()
-    for line in lines:
-        res = P.execute(line)
-        if res is None:
-            ex_lines.append(line)
-        else:
-            ex_lines += res
-
-    for line in ex_lines:
-        if "Cuboid" in line:
-            flip_lines.append(line)
-        elif "attach" in line:
-            parse = list(P.parseAttach(line))
-            parse[2+find] = 1 - parse[2+find]
-            parse[5+find] = 1 - parse[5+find]
-            flip_lines.append(make_function('attach', parse[:2] + [p.item() for p in parse[2:]]))
-        elif "END" in line:
-            pass
-            
-    return flip_lines
+def assign(var_name, value):
+    return '{} = {}'.format(var_name, value)
 
 # Given a cuboid cube, and its local program bounding volume rbox, and the actual placement of its bonding volume abox, find the correct transformation for cube
 def apply_delta(abox, rbox, cube):
@@ -1341,6 +1285,79 @@ def apply_delta(abox, rbox, cube):
     cube.rfnorm = r @ cube.rfnorm
     cube.tfnorm = r @ cube.tfnorm
     cube.ffnorm = r @ cube.ffnorm
+    
+# Execute a hierarchical shapeassembly program, in a differentiable fashion
+def diff_hier_execute(root, param_dict, return_all = False):
+           
+    q = [(root, None, False)]
+       
+    scene = []
+    
+    while len(q) > 0:    
+        node, bbox, flip_axis = q.pop(0)
+
+        param_lines = param_dict[node['name']]
+
+        if bbox is None:
+            bbox = Cuboid("bbox", aligned = True, vis=False)
+            bbox.dims = torch.stack(param_lines[0][1][1:4])
+            
+        TP = Program()
+        TP.runProgram(param_lines)
+
+        if flip_axis:
+            TP.flip(flip_axis)
+        
+        rbox = TP.cuboids.pop('bbox')
+    
+        add = []
+
+        for i, c_key in enumerate(TP.cuboids.keys()):
+            flip = False
+            cub = TP.cuboids[c_key]
+            child = None
+            
+            if i+1 < len(node["children"]):
+                child = node["children"][i+1]
+                
+            elif cub.parent is not None:
+                pi = list(TP.cuboids.keys()).index(cub.parent)
+                child = deepcopy(node["children"][pi+1])
+                if cub.parent_axis is not None and 'prog' in child:
+                    flip_axis = cub.parent_axis
+
+            # cub is found through local execution, this brings it into global space
+            apply_delta(bbox, rbox, cub)
+            
+            # if intermediate cuboid, add back into queue
+            if child is not None and len(child) > 0:                    
+                q.append((child, cub, flip_axis))
+            # if leave cuboid, save these cuboid to the add list
+            else:
+                add.append(cub)
+                
+        scene += add
+            
+    verts = torch.tensor([],dtype=torch.float)
+    faces = torch.tensor([],dtype=torch.long)
+    
+    for cube in scene:
+        v, f = cube.getTris()
+        if v is not None and f is not None:
+            faces =  torch.cat((faces, (f + verts.shape[0])))
+            verts = torch.cat((verts, v))
+
+
+    if return_all:
+        scene_cubes = [
+	    torch.cat((
+                c.pos, c.dims, c.rfnorm, c.tfnorm
+            )).detach().numpy() for c in scene
+        ]
+        scene_cubes = np.array(scene_cubes)
+        return verts, faces, scene_cubes
+            
+    return verts, faces
 
     
 # Execute a hierarchical shapeassembly program
@@ -1352,21 +1369,24 @@ def hier_execute(root, return_cubes=False, return_all=False):
         [float(a) for a in re.split(r'[()]', root['prog'][0])[1].split(',')[:3]]
     )
     
-    q = [(root, bbox)]
+    q = [(root, bbox, None)]
        
     scene = []
     hier_scene = []
     count = 0
     
     while len(q) > 0:    
-        node, bbox = q.pop(0)
+        node, bbox, flip_axis = q.pop(0)
 
         lines = node["prog"]
         TP = Program()
 
         for line in lines:
             TP.execute(line)        
-        
+
+        if flip_axis:
+            TP.flip(flip_axis)
+            
         rbox = TP.cuboids.pop('bbox')
     
         add = []
@@ -1374,6 +1394,7 @@ def hier_execute(root, return_cubes=False, return_all=False):
         for i, c_key in enumerate(TP.cuboids.keys()):
             cub = TP.cuboids[c_key]
             child = None
+            flip_axis = None
             
             if i+1 < len(node["children"]):
                 child = node["children"][i+1]
@@ -1382,13 +1403,13 @@ def hier_execute(root, return_cubes=False, return_all=False):
                 pi = list(TP.cuboids.keys()).index(cub.parent)
                 child = deepcopy(node["children"][pi+1])
                 if cub.parent_axis is not None and 'prog' in child:
-                    child['prog'] = flipRefSubProg(child['prog'], cub.parent_axis)
+                    flip_axis = cub.parent_axis
 
             # cub is found through local execution, this brings it into global space
             apply_delta(bbox, rbox, cub)
             # if intermediate cuboid, add back into queue
             if child is not None and len(child) > 0:                    
-                q.append((child, cub))
+                q.append((child, cub, flip_axis))
             # if leave cuboid, save these cuboid to the add list
             else:
                 add.append(cub)
@@ -1422,20 +1443,85 @@ class ShapeAssembly():
         for line in lines:
             P.execute(line)
         P.render(out_file)
-            
+
+    # Execute a program differentiable w.r.t. to the parameters in the param_dict
+    def diff_run(self, hier, param_dict):
+        return diff_hier_execute(hier, param_dict)
+        
     # Execute a program 
     def run(self, lines, out_file):
         hier_prog = make_hier_prog(lines)
         verts, faces = hier_execute(hier_prog)
         writeObj(verts, faces, out_file)
 
+    # load lines from a program file
     def load_lines(self, prog_file):
         lines = []
         with open(prog_file) as f:
             for line in f:
                 lines.append(line)
         return lines                
-                                        
+
+    # Convert a hierarchy + dictionary of parameters into a full ShapeAssembly program
+    def fill_hier(self, hier, param_dict):
+        q = [hier]
+        while(len(q) > 0):
+            node = q.pop(0)
+            param_lines = param_dict.pop(node['name'])
+            lines = []
+            for func, tparams in param_lines:
+                params = [
+                    round(p.item(), 2) if isinstance(p, torch.Tensor) else p \
+                    for p in tparams
+                ]
+                if func == "Cuboid":
+                    lines.append(
+                        assign(
+                            params[0],
+                            make_function(func, params[1:])
+                        )
+                    )
+                else:
+                    lines.append(
+                        make_function(func, params)
+                    )
+            node['prog'] = lines
+
+            for c in node['children']:
+                if len(c) > 0:
+                    q.append(c)
+        
+    # Return a program hierarchy, a dictionary of
+    # nodes to lines (as tensors), and a list
+    # of all tensors in lines -> used during differentiable execution
+    def make_hier_param_dict(self, lines):
+        h = make_hier_prog(lines)
+        q = [h]
+
+        param_list = []
+        param_dict = {}
+        
+        while len(q) > 0:
+            node = q.pop(0)
+            prog = node.pop('prog')
+            lines = []
+
+            for line in prog:                
+                func, tensor, parse = lineToAttrs(line)
+                lines.append((func, parse))
+                if tensor.shape[0] > 0:
+                    param_list.append(tensor)
+
+            param_dict[node['name']] = lines
+
+            for c in node['children']:
+                if len(c) > 0:
+                    q.append(c)
+
+        return h, param_dict, param_list
+        
+                
+        
 if __name__ == '__main__':
     mode, prog_file, out_file = sys.argv[1], sys.argv[2], sys.argv[3]
     sa = ShapeAssembly()
