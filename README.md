@@ -31,6 +31,8 @@ Project Page: https://rkjones4.github.io/shapeAssembly.html
 
 ## ShapeAssembly DSL
 
+![](http://rkjones4.github.io/img/shapeAssembly/exec.gif)
+
 The ShapeAssembly DSL is defined in code/ShapeAssembly.py . Within this file, the ShapeAssembly class is the entrypoint for interacting with the language.
 
 For instance, the file code/data/chair/173.txt describes a chair from our training set. To execute this program, and write the resulting shape to executed.obj, from the command line we can run:
@@ -46,6 +48,16 @@ from the code directory. Or from a python shell we can run:
 ```
 
 The interace for executing a non-hierarchical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
+
+In order to opitimize the parameters of a ShapeAssembly program using our differentiable executor, the diff_run function must be used. We provide a toy example demonstrating differentiable execution in code/example_fit.py. The command:
+
+```
+python3 example_fit.py data/table/33075.txt data/examples/comp_pc.obj fit
+```
+was used to optimize the parameters of the below shape-program to minimize chamfer distance against a target point cloud.
+
+![](http://rkjones4.github.io/img/shapeAssembly/table_fit.gif)
+
 
 ## Model Training/Evaluation
 
@@ -74,6 +86,8 @@ losses.py -> define losses used during training
 sem_valid.py -> logic implementing semantic validity checks used when decoding ShapeAssembly programs at eval time
 
 metrics.py -> functions for computing metrics of the generative model's performance. pointnet_classification.py, valid.py and voxelize.py are metric helper files.
+
+
 
 ## Data 
 
