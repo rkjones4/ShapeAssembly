@@ -35,7 +35,7 @@ Project Page: https://rkjones4.github.io/shapeAssembly.html
 
 The ShapeAssembly DSL is defined in code/ShapeAssembly.py . Within this file, the ShapeAssembly class is the entrypoint for interacting with the language.
 
-** Execution **
+**Execution**
 
 For instance, the file code/data/chair/173.txt describes a chair from our training set. To execute this program, and write the resulting shape to executed.obj, from the command line we can run:
 ```
@@ -51,7 +51,7 @@ from the code directory. Or from a python shell we can run:
 
 The interace for executing a non-hierarchical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
 
-** Program Fitting **
+**Program Fitting**
 
 In order to opitimize the parameters of a ShapeAssembly program using our differentiable executor, the diff_run function must be used. We provide a toy example demonstrating differentiable execution in code/example_fit.py. The command:
 
