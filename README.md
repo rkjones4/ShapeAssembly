@@ -35,6 +35,8 @@ Project Page: https://rkjones4.github.io/shapeAssembly.html
 
 The ShapeAssembly DSL is defined in code/ShapeAssembly.py . Within this file, the ShapeAssembly class is the entrypoint for interacting with the language.
 
+** Execution **
+
 For instance, the file code/data/chair/173.txt describes a chair from our training set. To execute this program, and write the resulting shape to executed.obj, from the command line we can run:
 ```
 python3 ShapeAssembly.py run data/chair/173.txt executed.obj
@@ -48,6 +50,8 @@ from the code directory. Or from a python shell we can run:
 ```
 
 The interace for executing a non-hierarchical program is very similiar (just replace run with run_local). The file code/data/examples/ex-0.txt contains a non-hierarchical ShapeAssembly program describing a table-top. 
+
+** Program Fitting **
 
 In order to opitimize the parameters of a ShapeAssembly program using our differentiable executor, the diff_run function must be used. We provide a toy example demonstrating differentiable execution in code/example_fit.py. The command:
 
@@ -63,11 +67,15 @@ was used to optimize the parameters of the below shape-program to minimize chamf
 
 The model for generating ShapeAssembly programs is defined in code/model_prog.py
 
+**Training**
+
 The command to train our model on the chair category can be run from the code directory as:
 ```
 python3 model_prog.py --dataset_path data/chair/ --category chair --exp_name chair_exp
 ```
 Training results from this run will be placed in model_output/chair_exp.
+
+**Shape Generation**
 
 We also include pre-trained models for the chair, table and storage categories. These can be found in the code/model_output/pre_* folders.
 
@@ -77,7 +85,20 @@ python3 model_prog.py --mode eval_gen --num_gen 10 --exp_name pre_chair --model_
 ```
 This will generate 10 chair-programs and output them in code/model_output/gen_pre_chair. 
 
-Other Relevant modeling files:
+**Point Cloud -> Program**
+
+To use our pre-trained point cloud -> shapeAssembly models for chairs, please see the README's in the pc_data and pointnet2 directories.
+Once those are set-up correctly, you can infer a shapeAssembly program from a point cloud sampled from a PartNet chair with such a command:
+
+```
+python3 chair_program_from_pc.py test_pc 2307
+```
+
+This will infer a ShapeAssembly program from the point cloud of shape 2307 and write the output to the directory test_pc.
+
+In order to train a new point cloud -> ShapeAssembly model, please see the helper functions in the pc_data directory, and follow the training procedure described in the paper.
+
+**Other Relevant modeling files **
 
 parse_prog.py -> functions for tensorizing/un-tensorizing text-based ShapeAssembly programs
 
