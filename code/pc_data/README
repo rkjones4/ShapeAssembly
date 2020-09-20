@@ -1,0 +1,7 @@
+Please download pre-trained models and point cloud samples on partNet chairs from: https://drive.google.com/file/d/1jmSWAKOr_pBVfmZb6g0bjkySaGxPTxTF/view?usp=sharing
+
+We also include the code that was used to generate these models, although some tweaks may be required to run on new data (please raise github questions if you run into issues).
+
+sample_partnet.py -> saves all point-samples on training data shapes from PartNet to .pts files (point-clouds)
+make_shapeassembly_encodings.py -> takes paired (part-graphs, point clouds) -> saves shapeAssembly encoding from pre-trained model
+train_pc_encoder.py -> trains new point cloud encoder to learn point-cloud -> shapeAssembly encoding mapping
