@@ -11,7 +11,7 @@ We present a deep generative model which learns to write novel programs in Shape
 
 Paper: https://rkjones4.github.io/pdf/shapeAssembly.pdf
 
-Video: https://www.youtube.com/watch?v=-FqQml84vmI
+Video: https://www.youtube.com/watch?v=YqFaJXWT86o
 
 Presented at [Siggraph Asia 2020](https://sa2020.siggraph.org/).
 
