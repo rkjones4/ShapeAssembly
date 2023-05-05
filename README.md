@@ -17,8 +17,6 @@ Presented at [Siggraph Asia 2020](https://sa2020.siggraph.org/).
 
 Project Page: https://rkjones4.github.io/shapeAssembly.html
 
-Interactive Editor: http://shapeassembly.cs.brown.edu/
-
 ## Citations
 ```
    @article{jones2020shapeAssembly,
